@@ -1,0 +1,5 @@
+pandas
+requests
+ratelimit
+python-dotenv
+tqdm
