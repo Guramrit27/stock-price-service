@@ -32,5 +32,41 @@ build/
 ### VS Code ###
 .vscode/
 
-### Environment Variables ###
+### Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+### IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+### Logs
+*.log
+
+### Generated data
+scripts/stock_data/
+*.json
+
+### Environment variables
 .env
