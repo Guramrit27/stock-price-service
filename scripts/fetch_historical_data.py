@@ -25,6 +25,7 @@ logging.basicConfig(
 # Constants
 CALLS_PER_MINUTE = 5
 ONE_MINUTE = 60
+SECONDS_PER_CALL = ONE_MINUTE / CALLS_PER_MINUTE  # 12 seconds between calls
 BASE_URL = "http://localhost:8080/api/stocks"
 DATA_DIR = "stock_data"
 STOCKS_FILE = os.path.join(DATA_DIR, "stock_symbols.txt")
@@ -128,9 +129,10 @@ def fetch_historical_data():
         return
 
     logging.info(f"Starting historical data collection for {len(symbols)} symbols...")
+    logging.info(f"Rate limit: {CALLS_PER_MINUTE} calls per minute (1 call every {SECONDS_PER_CALL} seconds)")
     
     # Process each symbol
-    for symbol in tqdm(symbols, desc="Fetching historical data"):
+    for i, symbol in enumerate(tqdm(symbols, desc="Fetching historical data")):
         try:
             # Skip if already processed
             output_file = os.path.join(HISTORICAL_DATA_DIR, f"{symbol}_historical.json")
@@ -143,8 +145,13 @@ def fetch_historical_data():
             if data:
                 save_historical_data(symbol, data)
             
-            # Small delay between requests
-            time.sleep(1)
+            # Enforce rate limiting with a sleep
+            # The @limits decorator helps prevent bursts, but we'll add a sleep to be extra safe
+            time.sleep(SECONDS_PER_CALL)
+            
+            # Log progress every 10 symbols
+            if (i + 1) % 10 == 0:
+                logging.info(f"Processed {i + 1}/{len(symbols)} symbols")
             
         except Exception as e:
             logging.error(f"Error processing {symbol}: {str(e)}")
